@@ -10,16 +10,16 @@ LA.init({
 });
 
 (async () => {
-  if (new URL(location.href).searchParams.has("code")) {
-    const res = await getAccessToken(
-      new URL(location.href).searchParams.get("code")!
-    );
-    localStorage.setItem("access_token", res.access_token);
-    localStorage.setItem("refresh_token", res.refresh_token);
-  } else if (
-    !(localStorage.getItem("access_token")?.startsWith("ghu_") ?? false)
-  ) {
-    getCode();
+  if (!(localStorage.getItem("access_token")?.startsWith("ghu_") ?? false)) {
+    if (new URL(location.href).searchParams.has("code")) {
+      const res = await getAccessToken(
+        new URL(location.href).searchParams.get("code")!
+      );
+      localStorage.setItem("access_token", res.access_token);
+      localStorage.setItem("refresh_token", res.refresh_token);
+    } else {
+      getCode();
+    }
   }
 
   const tabs = [...document.querySelectorAll(".tab-container .tab")];
