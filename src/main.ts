@@ -12,7 +12,7 @@ LA.init({
 });
 
 window.addEventListener("load", async () => {
-  if (typeof GM_xmlhttpRequest === "undefined") {
+  if (typeof window.GM_xmlhttpRequest === "undefined") {
     alert("请先安装“绳网跨域助手”");
     location.href = "https://greasyfork.org/zh-CN/scripts/502874";
   }
