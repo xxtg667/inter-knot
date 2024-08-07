@@ -59,8 +59,7 @@ LA.init({
     userInfo,
   }: {
     userInfo: {
-      login: string;
-      id: number;
+      name: string;
       avatar_url: string;
       html_url: string;
       public_repos: number;
@@ -70,7 +69,7 @@ LA.init({
       curExp: 6982,
       totalExp: 10000,
       level: userInfo.public_repos,
-      name: userInfo.login,
+      name: userInfo.name,
       profilePhoto: userInfo.avatar_url,
     });
     // renderArticleList([]);
@@ -220,18 +219,70 @@ LA.init({
     return res;
   }
 
-  function getUserInfo(access_token: string): Promise<{
-    login: string;
-    id: number;
+  async function getUserInfo(access_token: string): Promise<{
+    name: string;
     avatar_url: string;
     html_url: string;
     public_repos: number;
   }> {
-    return fetch(`https://api.github.com/user`, {
+    // return fetch(`https://api.github.com/user`, {
+    //   headers: {
+    //     accept: "application/json",
+    //     Authorization: "Bearer " + access_token,
+    //   },
+    // }).then((e) => e.json());
+    const { data } = await graphql({
+      access_token,
+      data: `
+        query {
+          viewer {
+            avatarUrl
+            name
+            repositories {
+              totalCount
+            }
+          }
+        }
+      `,
+    });
+    return {
+      name: data.viewer.name,
+      avatar_url: data.viewer.avatarUrl,
+      html_url: `https://github.com/${data.viewer.name}`,
+      public_repos: data.viewer.repositories.totalCount,
+    };
+  }
+
+  function getDiscussions(access_token: string): Promise<any> {
+    return graphql({
+      access_token,
+      data: `
+        query {
+          viewer {
+            avatarUrl
+            name
+            repositories {
+              totalCount
+            }
+          }
+        }
+      `,
+    });
+  }
+
+  function graphql({
+    access_token,
+    data,
+  }: {
+    access_token: string;
+    data: string;
+  }) {
+    return fetch("https://api.github.com/graphql", {
+      method: "POST",
       headers: {
-        accept: "application/json",
         Authorization: "Bearer " + access_token,
       },
+      body: data,
     }).then((e) => e.json());
   }
 })();
