@@ -41,28 +41,28 @@ const macy = Macy({
   },
 });
 
-// renderUserInfo({
-//   curExp: 6982,
-//   totalExp: 10000,
-//   level: 9999,
-//   name: "share121",
-//   profilePhoto: new URL("/我的头像.png", import.meta.url).href,
-// });
-// renderArticleList(
-//   Array(200)
-//     .fill(null)
-//     .map(() => ({
-//       title: "标题标题标题标题标题标题标题标题标题标题标题标题标题标题标题标题",
-//       content:
-//         "内容内容内容内容内容内容内<br />容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容",
-//       author:
-//         "作者作者作者作者作者作者作者作者作者作者作者作者作者作者作者作者作者作者作者作者作者",
-//       authorPhoto: new URL(`image${getRandomInt(0, 3)}.png`, location.href)
-//         .href,
-//       cover: new URL(`image${getRandomInt(0, 3)}.png`, location.href).href,
-//       visited: getRandomInt(0, 10000),
-//     }))
-// );
+renderUserInfo({
+  curExp: 6982,
+  totalExp: 10000,
+  level: 9999,
+  name: "share121",
+  profilePhoto: new URL("/我的头像.png", import.meta.url).href,
+});
+renderArticleList(
+  Array(200)
+    .fill(null)
+    .map(() => ({
+      title: "标题标题标题标题标题标题标题标题标题标题标题标题标题标题标题标题",
+      content:
+        "内容内容内容内容内容内容内<br />容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容",
+      author:
+        "作者作者作者作者作者作者作者作者作者作者作者作者作者作者作者作者作者作者作者作者作者",
+      authorPhoto: new URL(`image${getRandomInt(0, 3)}.png`, location.href)
+        .href,
+      cover: new URL(`image${getRandomInt(0, 3)}.png`, location.href).href,
+      visited: getRandomInt(0, 10000),
+    }))
+);
 
 /**  不包含最大值，包含最小值 */
 function getRandomInt(min: number, max: number) {
