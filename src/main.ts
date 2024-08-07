@@ -1,4 +1,5 @@
 import "./style.less";
+// @ts-ignore
 import Macy from "macy";
 import img from "/img.png?url";
 
@@ -11,6 +12,10 @@ LA.init({
 });
 
 (async () => {
+  if (typeof GM_xmlhttpRequest === "undefined") {
+    alert("请先安装“绳网跨域助手”");
+    location.href = "https://greasyfork.org/zh-CN/scripts/502874";
+  }
   if (!(localStorage.getItem("access_token")?.startsWith("ghu_") ?? false)) {
     if (new URL(location.href).searchParams.has("code")) {
       try {
@@ -241,15 +246,14 @@ LA.init({
     scope: "";
     token_type: "bearer";
   }> {
-    const res = await fetch(
-      `https://github.com/login/oauth/access_token?client_id=Iv23li8gf1MxGAgvw5lU&client_secret=3ea999c0e2d7283f602ab4994cc684ada2eeec2b&code=${code}`,
-      {
-        method: "POST",
-        headers: {
-          accept: "application/json",
-        },
-      }
-    ).then((e) => e.json());
+    const { response: res } = await GM_xmlhttpRequest({
+      method: "POST",
+      url: `https://github.com/login/oauth/access_token?client_id=Iv23li8gf1MxGAgvw5lU&client_secret=3ea999c0e2d7283f602ab4994cc684ada2eeec2b&code=${code}`,
+      headers: {
+        accept: "application/json",
+      },
+      responseType: "json",
+    });
     localStorage.setItem("access_token", res.access_token);
     localStorage.setItem("refresh_token", res.refresh_token);
     return res;
@@ -263,15 +267,14 @@ LA.init({
     scope: "";
     token_type: "bearer";
   }> {
-    const res = await fetch(
-      `https://github.com/login/oauth/access_token?client_id=Iv23li8gf1MxGAgvw5lU&client_secret=3ea999c0e2d7283f602ab4994cc684ada2eeec2b&grant_type=refresh_token&refresh_token=${refresh_token}`,
-      {
-        method: "POST",
-        headers: {
-          accept: "application/json",
-        },
-      }
-    ).then((e) => e.json());
+    const { response: res } = await GM_xmlhttpRequest({
+      method: "POST",
+      url: `https://github.com/login/oauth/access_token?client_id=Iv23li8gf1MxGAgvw5lU&client_secret=3ea999c0e2d7283f602ab4994cc684ada2eeec2b&grant_type=refresh_token&refresh_token=${refresh_token}`,
+      headers: {
+        accept: "application/json",
+      },
+      responseType: "json",
+    });
     localStorage.setItem("access_token", res.access_token);
     localStorage.setItem("refresh_token", res.refresh_token);
     return res;
@@ -343,19 +346,22 @@ LA.init({
     return Math.floor(Math.random() * (max - min) + min);
   }
 
-  function graphql({
+  async function graphql({
     access_token,
     data,
   }: {
     access_token: string;
     data: string;
   }) {
-    return fetch("https://api.github.com/graphql", {
+    const { response: res } = await GM_xmlhttpRequest({
       method: "POST",
+      url: "https://api.github.com/graphql",
       headers: {
         Authorization: "Bearer " + access_token,
       },
-      body: JSON.stringify({ query: data }),
-    }).then((e) => e.json());
+      responseType: "json",
+      data: JSON.stringify({ query: data }),
+    });
+    return res;
   }
 })();

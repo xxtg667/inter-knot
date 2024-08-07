@@ -12,7 +12,7 @@ export default defineConfig({
   css: {
     postcss: {
       plugins: [
-        postcsspxtoviewport({ viewportWidth: 1920 }),
+        postcsspxtoviewport({ viewportWidth: 1536 }),
         postcssPresetEnv({
           browsers: [">= 0%"],
           features: {
