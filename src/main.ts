@@ -12,11 +12,7 @@ LA.init({
 (async () => {
   if (!(localStorage.getItem("access_token")?.startsWith("ghu_") ?? false)) {
     if (new URL(location.href).searchParams.has("code")) {
-      const res = await getAccessToken(
-        new URL(location.href).searchParams.get("code")!
-      );
-      localStorage.setItem("access_token", res.access_token);
-      localStorage.setItem("refresh_token", res.refresh_token);
+      await getAccessToken(new URL(location.href).searchParams.get("code")!);
     } else {
       getCode();
     }
@@ -39,27 +35,41 @@ LA.init({
   const macy = Macy({
     container: ".card-container",
     columns: 5,
-    margin: {
-      x: 0,
-      y: 0,
-    },
+    margin: { x: 0, y: 0 },
   });
 
-  const userInfo = await getUserInfo(localStorage.getItem("access_token")!);
-  renderUserInfo({
-    curExp: 6982,
-    totalExp: 10000,
-    level: userInfo.public_repos,
-    name: userInfo.login,
-    profilePhoto: userInfo.avatar_url,
-  });
-  // renderArticleList([]);
+  try {
+    const userInfo = await getUserInfo(localStorage.getItem("access_token")!);
+    render({ userInfo });
+  } catch {
+    try {
+      await refreshAccessToken(localStorage.getItem("refresh_token")!);
+      const userInfo = await getUserInfo(localStorage.getItem("access_token")!);
+      render({ userInfo });
+    } catch {
+      getCode();
+    }
+  }
 
-  /**  不包含最大值，包含最小值 */
-  function getRandomInt(min: number, max: number) {
-    const minCeiled = Math.ceil(min);
-    const maxFloored = Math.floor(max);
-    return Math.floor(Math.random() * (maxFloored - minCeiled) + minCeiled);
+  function render({
+    userInfo,
+  }: {
+    userInfo: {
+      login: string;
+      id: number;
+      avatar_url: string;
+      html_url: string;
+      public_repos: number;
+    };
+  }) {
+    renderUserInfo({
+      curExp: 6982,
+      totalExp: 10000,
+      level: userInfo.public_repos,
+      name: userInfo.login,
+      profilePhoto: userInfo.avatar_url,
+    });
+    // renderArticleList([]);
   }
 
   function renderUserInfo({
@@ -162,7 +172,7 @@ LA.init({
       "https://github.com/login/oauth/authorize?client_id=Iv23li8gf1MxGAgvw5lU";
   }
 
-  function getAccessToken(code: string): Promise<{
+  async function getAccessToken(code: string): Promise<{
     access_token: string;
     expires_in: number;
     refresh_token: string;
@@ -170,7 +180,7 @@ LA.init({
     scope: "";
     token_type: "bearer";
   }> {
-    return fetch(
+    const res = await fetch(
       `https://github.com/login/oauth/access_token?client_id=Iv23li8gf1MxGAgvw5lU&client_secret=3ea999c0e2d7283f602ab4994cc684ada2eeec2b&code=${code}`,
       {
         method: "POST",
@@ -179,6 +189,31 @@ LA.init({
         },
       }
     ).then((e) => e.json());
+    localStorage.setItem("access_token", res.access_token);
+    localStorage.setItem("refresh_token", res.refresh_token);
+    return res;
+  }
+
+  async function refreshAccessToken(refresh_token: string): Promise<{
+    access_token: string;
+    expires_in: number;
+    refresh_token: string;
+    refresh_token_expires_in: number;
+    scope: "";
+    token_type: "bearer";
+  }> {
+    const res = await fetch(
+      `https://github.com/login/oauth/access_token?client_id=Iv23li8gf1MxGAgvw5lU&client_secret=3ea999c0e2d7283f602ab4994cc684ada2eeec2b&grant_type=refresh_token&refresh_token=${refresh_token}`,
+      {
+        method: "POST",
+        headers: {
+          accept: "application/json",
+        },
+      }
+    ).then((e) => e.json());
+    localStorage.setItem("access_token", res.access_token);
+    localStorage.setItem("refresh_token", res.refresh_token);
+    return res;
   }
 
   function getUserInfo(access_token: string): Promise<{
