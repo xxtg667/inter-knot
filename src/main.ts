@@ -44,29 +44,6 @@ LA.init({
 
   try {
     const userInfo = await getUserInfo(localStorage.getItem("access_token")!);
-    render({ userInfo });
-  } catch {
-    try {
-      await refreshAccessToken(localStorage.getItem("refresh_token")!);
-      const userInfo = await getUserInfo(localStorage.getItem("access_token")!);
-      render({ userInfo });
-    } catch {
-      getCode();
-    }
-  }
-
-  getDiscussions(localStorage.getItem("access_token")!);
-
-  function render({
-    userInfo,
-  }: {
-    userInfo: {
-      name: string;
-      avatar_url: string;
-      html_url: string;
-      public_repos: number;
-    };
-  }) {
     renderUserInfo({
       curExp: 6982,
       totalExp: 10000,
@@ -75,7 +52,62 @@ LA.init({
       profilePhoto: userInfo.avatar_url,
       url: userInfo.html_url,
     });
-    // renderArticleList([]);
+  } catch {
+    try {
+      await refreshAccessToken(localStorage.getItem("refresh_token")!);
+      const userInfo = await getUserInfo(localStorage.getItem("access_token")!);
+      renderUserInfo({
+        curExp: 6982,
+        totalExp: 10000,
+        level: userInfo.public_repos,
+        name: userInfo.name,
+        profilePhoto: userInfo.avatar_url,
+        url: userInfo.html_url,
+      });
+    } catch {
+      getCode();
+    }
+  }
+
+  try {
+    const nodes = await getDiscussions(localStorage.getItem("access_token")!);
+    renderArticleList(
+      nodes.map((e) => ({
+        cover: "https://avatars.githubusercontent.com/u/1067290?v=4",
+        authorPhoto: e.author.avatarUrl,
+        title: e.title,
+        author: e.author.login,
+        content: e.bodyHTML,
+        visited: getRandomInt(0, 1001),
+        comments: e.comments.nodes.map((e) => ({
+          profilePhoto: e.author.avatarUrl,
+          name: e.author.login,
+          content: e.bodyHTML,
+        })),
+      }))
+    );
+  } catch {
+    try {
+      await refreshAccessToken(localStorage.getItem("refresh_token")!);
+      const nodes = await getDiscussions(localStorage.getItem("access_token")!);
+      renderArticleList(
+        nodes.map((e) => ({
+          cover: "https://avatars.githubusercontent.com/u/1067290?v=4",
+          authorPhoto: e.author.avatarUrl,
+          title: e.title,
+          author: e.author.login,
+          content: e.bodyHTML,
+          visited: getRandomInt(0, 1001),
+          comments: e.comments.nodes.map((e) => ({
+            profilePhoto: e.author.avatarUrl,
+            name: e.author.login,
+            content: e.bodyHTML,
+          })),
+        }))
+      );
+    } catch {
+      getCode();
+    }
   }
 
   function renderUserInfo({
@@ -112,6 +144,11 @@ LA.init({
       authorPhoto: string;
       content: string;
       visited: number;
+      comments: {
+        profilePhoto: string;
+        name: string;
+        content: string;
+      }[];
     }[]
   ) {
     document.querySelector(".card-container")!.innerHTML = list
@@ -126,7 +163,8 @@ LA.init({
         e.addEventListener("load", () => macy.recalculate(true), { once: true })
       );
     document.querySelectorAll(".card-container .card").forEach((e, i) => {
-      const { cover, title, author, authorPhoto, content, visited } = list[i];
+      const { cover, title, author, authorPhoto, content, visited, comments } =
+        list[i];
       e.addEventListener("click", () => {
         renderPopup({
           cover,
@@ -135,7 +173,7 @@ LA.init({
           authorPhoto,
           content,
           visited,
-          comments: [],
+          comments,
         });
       });
     });
@@ -159,13 +197,13 @@ LA.init({
     comments: {
       profilePhoto: string;
       name: string;
-      text: string;
+      content: string;
     }[];
   }) {
     popupContainer.innerHTML = `<div class="popup"><header><img class="profile-photo" src="${authorPhoto}" alt="头像" /><div><div>${author}</div><div class="visited"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" ><path fill="currentColor" d="M1.182 12C2.122 6.88 6.608 3 12 3s9.878 3.88 10.819 9c-.94 5.12-5.427 9-10.819 9s-9.878-3.88-10.818-9M12 17a5 5 0 1 0 0-10a5 5 0 0 0 0 10m0-2a3 3 0 1 1 0-6a3 3 0 0 1 0 6" /></svg>${visited}</div></div><div class="close-btn"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" ><path fill="currentColor" d="m12 10.587l4.95-4.95l1.414 1.414l-4.95 4.95l4.95 4.95l-1.415 1.414l-4.95-4.95l-4.949 4.95l-1.414-1.415l4.95-4.95l-4.95-4.95L7.05 5.638z" /></svg></div></header><main><div class="cover"><img src="${cover}" alt="封面" /></div><div class="content"><div class="title">${title}</div><div class="text">${content}</div><div class="comments">${comments
       .map(
         (e) =>
-          `<section class="comment"><img class="profile-photo" src="${e.profilePhoto}" alt="头像" /><div><div class="name">${e.name}</div><div class="text">${e.text}</div></div></section>`
+          `<section class="comment"><img class="profile-photo" src="${e.profilePhoto}" alt="头像" /><div><div class="name">${e.name}</div><div class="text">${e.content}</div></div></section>`
       )
       .join("")}</div></div></main></div>`;
     document.querySelector(".close-btn")!.addEventListener("click", () => {
@@ -243,39 +281,51 @@ LA.init({
     };
   }
 
-  async function getDiscussions(access_token: string): Promise<any> {
-    console.log(
-      await graphql({
-        access_token,
-        data: `
-        query {
-          repository(owner: "share121", name: "inter-knot") {
-            discussions {
-              nodes {
-                author {
-                  avatarUrl
-                  login
-                  url
-                }
-                bodyHTML
-                title
-                comments {
-                  nodes {
-                    author {
-                      avatarUrl
-                      login
-                      url
-                    }
-                    bodyHTML
-                  }
-                }
-              }
-            }
-          }
-        }
-      `,
-      })
-    );
+  async function getDiscussions(access_token: string) {
+    const {
+      data: {
+        repository: {
+          discussions: { nodes },
+        },
+      },
+    }: {
+      data: {
+        repository: {
+          discussions: {
+            nodes: {
+              author: {
+                avatarUrl: string;
+                login: string;
+                url: string;
+              };
+              bodyHTML: string;
+              title: string;
+              comments: {
+                nodes: {
+                  author: {
+                    avatarUrl: string;
+                    login: string;
+                    url: string;
+                  };
+                  bodyHTML: string;
+                }[];
+              };
+            }[];
+          };
+        };
+      };
+    } = await graphql({
+      access_token,
+      data: 'query { repository(owner: "share121", name: "inter-knot") { discussions(first: 100) { nodes { author { avatarUrl login url } bodyHTML title comments(first: 100) { nodes { author { avatarUrl login url } bodyHTML } } } } } }',
+    });
+    return nodes;
+  }
+
+  /** 不含最大值，含最小值 */
+  function getRandomInt(min: number, max: number) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min) + min);
   }
 
   function graphql({
