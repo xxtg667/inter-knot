@@ -12,7 +12,11 @@ LA.init({
 (async () => {
   if (!(localStorage.getItem("access_token")?.startsWith("ghu_") ?? false)) {
     if (new URL(location.href).searchParams.has("code")) {
-      await getAccessToken(new URL(location.href).searchParams.get("code")!);
+      try {
+        await getAccessToken(new URL(location.href).searchParams.get("code")!);
+      } catch {
+        getCode();
+      }
     } else {
       getCode();
     }
@@ -229,17 +233,18 @@ LA.init({
     // }).then((e) => e.json());
     const { data } = await graphql({
       access_token,
-      data: `
-        query {
-          viewer {
-            avatarUrl
-            name
-            repositories {
-              totalCount
+      data: JSON.stringify({
+        query: `
+          query {
+            viewer {
+              avatarUrl
+              name
+              repositories {
+                totalCount
+              }
             }
-          }
-        }
-      `,
+          }`,
+      }),
     });
     return {
       name: data.viewer.name,
