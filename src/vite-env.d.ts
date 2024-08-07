@@ -3,6 +3,7 @@
 export {};
 
 declare global {
+  function run();
   function GM_xmlhttpRequest(
     details: Partial<{
       method: "GET" | "HEAD" | "POST";

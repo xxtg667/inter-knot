@@ -11,11 +11,7 @@ LA.init({
   prefix: "inter-knot/event",
 });
 
-window.addEventListener("load", async () => {
-  if (typeof window.GM_xmlhttpRequest === "undefined") {
-    alert("请先安装“绳网跨域助手”");
-    location.href = "https://greasyfork.org/zh-CN/scripts/502874";
-  }
+window.run = async () => {
   if (!(localStorage.getItem("access_token")?.startsWith("ghu_") ?? false)) {
     if (new URL(location.href).searchParams.has("code")) {
       try {
@@ -364,7 +360,14 @@ window.addEventListener("load", async () => {
     });
     return res;
   }
-});
+};
+
+setTimeout(() => {
+  if (typeof window.GM_xmlhttpRequest === "undefined") {
+    alert("请先安装“绳网跨域助手”");
+    location.href = "https://greasyfork.org/zh-CN/scripts/502874";
+  }
+}, 5000);
 
 function request<T>(
   prop: Partial<{
