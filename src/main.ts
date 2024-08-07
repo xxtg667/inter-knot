@@ -243,9 +243,9 @@ LA.init({
     };
   }
 
-  function getDiscussions(access_token: string): Promise<any> {
+  async function getDiscussions(access_token: string): Promise<any> {
     console.log(
-      graphql({
+      await graphql({
         access_token,
         data: `
         query {
