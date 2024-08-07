@@ -236,9 +236,9 @@ LA.init({
       }),
     });
     return {
-      name: data.viewer.name,
+      name: data.viewer.login,
       avatar_url: data.viewer.avatarUrl,
-      html_url: `https://github.com/${data.viewer.name}`,
+      html_url: `https://github.com/${data.viewer.login}`,
       public_repos: data.viewer.repositories.totalCount,
     };
   }
