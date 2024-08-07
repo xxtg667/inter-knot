@@ -16,15 +16,23 @@ tabs.forEach((e) => {
     e.classList.add("active");
   });
 });
+const popupContainer = document.querySelector(".popup-container")!;
+popupContainer.addEventListener("click", (e) => {
+  if (e.target === popupContainer) {
+    popupContainer.classList.remove("open");
+    popupContainer.classList.add("closed");
+  }
+});
 const macy = Macy({
   container: ".card-container",
+  columns: 5,
   margin: {
     x: 0,
     y: 0,
   },
 });
 renderUserInfo({
-  curExp: 5000,
+  curExp: 6982,
   totalExp: 10000,
   level: 9999,
   name: "share121",
@@ -36,7 +44,7 @@ renderArticleList(
     .map(() => ({
       title: "标题标题标题标题标题标题标题标题标题标题标题标题标题标题标题标题",
       content:
-        "内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容",
+        "内容内容内容内容内容内容内<br />容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容",
       author:
         "作者作者作者作者作者作者作者作者作者作者作者作者作者作者作者作者作者作者作者作者作者",
       authorPhoto: new URL(`image${getRandomInt(0, 3)}.png`, location.href)
@@ -92,7 +100,129 @@ function renderArticleList(
         `<div class="card-wrapper"><div class="card"><section class="cover-container"><img class="cover" src="${cover}" alt="封面" /><div class="visited"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" ><path fill="currentColor" d="M1.182 12C2.122 6.88 6.608 3 12 3s9.878 3.88 10.819 9c-.94 5.12-5.427 9-10.819 9s-9.878-3.88-10.818-9M12 17a5 5 0 1 0 0-10a5 5 0 0 0 0 10m0-2a3 3 0 1 1 0-6a3 3 0 0 1 0 6" /></svg>${visited}</div></section><section class="info-container"><div class="profile"><img class="profile-photo" src="${authorPhoto}" alt="头像" /><div class="username">${author}</div></div><div class="title">${title}</div><div class="content">${content}</div></section></div></div>`
     )
     .join("");
-  document.querySelectorAll(".card-container img").forEach((e) => {
-    e.addEventListener("load", () => macy.recalculate(true), { once: true });
+  document
+    .querySelectorAll(".card-container img")
+    .forEach((e) =>
+      e.addEventListener("load", () => macy.recalculate(true), { once: true })
+    );
+  document.querySelectorAll(".card-container .card").forEach((e, i) => {
+    const { cover, title, author, authorPhoto, content, visited } = list[i];
+    e.addEventListener("click", () => {
+      renderPopup({
+        cover,
+        title,
+        author,
+        authorPhoto,
+        content,
+        visited,
+        comments: [
+          {
+            name: "dfsdf",
+            profilePhoto: new URL("头像.png", location.href).href,
+            text: "测试评论",
+          },
+          {
+            name: "dfsdf",
+            profilePhoto: new URL("头像.png", location.href).href,
+            text: "测试评论",
+          },
+          {
+            name: "dfsdf",
+            profilePhoto: new URL("头像.png", location.href).href,
+            text: "测试评论",
+          },
+          {
+            name: "dfsdf",
+            profilePhoto: new URL("头像.png", location.href).href,
+            text: "测试评论",
+          },
+          {
+            name: "dfsdf",
+            profilePhoto: new URL("头像.png", location.href).href,
+            text: "测试评论",
+          },
+          {
+            name: "dfsdf",
+            profilePhoto: new URL("头像.png", location.href).href,
+            text: "测试评论",
+          },
+          {
+            name: "dfsdf",
+            profilePhoto: new URL("头像.png", location.href).href,
+            text: "测试评论",
+          },
+          {
+            name: "dfsdf",
+            profilePhoto: new URL("头像.png", location.href).href,
+            text: "测试评论",
+          },
+          {
+            name: "dfsdf",
+            profilePhoto: new URL("头像.png", location.href).href,
+            text: "测试评论",
+          },
+          {
+            name: "dfsdf",
+            profilePhoto: new URL("头像.png", location.href).href,
+            text: "测试评论",
+          },
+          {
+            name: "dfsdf",
+            profilePhoto: new URL("头像.png", location.href).href,
+            text: "测试评论",
+          },
+          {
+            name: "dfsdf",
+            profilePhoto: new URL("头像.png", location.href).href,
+            text: "测试评论",
+          },
+          {
+            name: "dfsdf",
+            profilePhoto: new URL("头像.png", location.href).href,
+            text: "测试评论",
+          },
+          {
+            name: "dfsdf",
+            profilePhoto: new URL("头像.png", location.href).href,
+            text: "测试评论",
+          },
+        ],
+      });
+    });
   });
+}
+
+function renderPopup({
+  authorPhoto,
+  author,
+  visited,
+  cover,
+  title,
+  content,
+  comments,
+}: {
+  authorPhoto: string;
+  author: string;
+  visited: number;
+  cover: string;
+  title: string;
+  content: string;
+  comments: {
+    profilePhoto: string;
+    name: string;
+    text: string;
+  }[];
+}) {
+  popupContainer.innerHTML = `<div class="popup"><header><img class="profile-photo" src="${authorPhoto}" alt="头像" /><div><div>${author}</div><div class="visited"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" ><path fill="currentColor" d="M1.182 12C2.122 6.88 6.608 3 12 3s9.878 3.88 10.819 9c-.94 5.12-5.427 9-10.819 9s-9.878-3.88-10.818-9M12 17a5 5 0 1 0 0-10a5 5 0 0 0 0 10m0-2a3 3 0 1 1 0-6a3 3 0 0 1 0 6" /></svg>${visited}</div></div><div class="close-btn"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" ><path fill="currentColor" d="m12 10.587l4.95-4.95l1.414 1.414l-4.95 4.95l4.95 4.95l-1.415 1.414l-4.95-4.95l-4.949 4.95l-1.414-1.415l4.95-4.95l-4.95-4.95L7.05 5.638z" /></svg></div></header><main><div class="cover"><img src="${cover}" alt="封面" /></div><div class="content"><div class="title">${title}</div><div class="text">${content}</div><div class="comments">${comments
+    .map(
+      (e) =>
+        `<section class="comment"><img class="profile-photo" src="${e.profilePhoto}" alt="头像" /><div><div class="name">${e.name}</div><div class="text">${e.text}</div></div></section>`
+    )
+    .join("")}</div></div></main></div>`;
+  document.querySelector(".close-btn")!.addEventListener("click", () => {
+    popupContainer.classList.remove("open");
+    popupContainer.classList.add("closed");
+  });
+  popupContainer.classList.remove("closed");
+  popupContainer.classList.add("open");
 }

@@ -18,31 +18,34 @@
   </head>
 
   <body>
-    <header>
-      <div class="user-info">
-        <img class="profile-photo" alt="我的头像" />
-        <div class="user-info-text">
-          <div class="username">佚名</div>
-          <div class="experience">
-            <div class="bar">
-              <span class="curExp">0</span>/<span class="totalExp">0</span>
+    <section>
+      <header>
+        <div class="user-info">
+          <img class="profile-photo" alt="我的头像" />
+          <div class="user-info-text">
+            <div class="username">佚名</div>
+            <div class="experience">
+              <div class="bar">
+                <span class="curExp">0</span>/<span class="totalExp">0</span>
+              </div>
             </div>
           </div>
+          <div class="level">
+            <div class="level-num">0</div>
+            <div class="level-text">LEVEL</div>
+          </div>
         </div>
-        <div class="level">
-          <div class="level-num">0</div>
-          <div class="level-text">LEVEL</div>
+        <div class="tab-container">
+          <div class="active tab"><span>推送</span></div>
+          <div class="tab"><span>日程</span></div>
+          <div class="tab"><span>绳网等级</span></div>
         </div>
-      </div>
-      <div class="tab-container">
-        <div class="active tab"><span>推送</span></div>
-        <div class="tab"><span>日程</span></div>
-        <div class="tab"><span>绳网等级</span></div>
-      </div>
-    </header>
-    <main>
-      <div class="card-container"></div>
-    </main>
+      </header>
+      <main>
+        <div class="card-container"></div>
+      </main>
+    </section>
+    <div class="popup-container closed"></div>
     <script defer type="module" src="/src/main.ts"></script>
   </body>
 </html>
