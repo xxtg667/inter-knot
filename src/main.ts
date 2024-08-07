@@ -71,6 +71,7 @@ LA.init({
       level: userInfo.public_repos,
       name: userInfo.name,
       profilePhoto: userInfo.avatar_url,
+      url: userInfo.html_url,
     });
     // renderArticleList([]);
   }
@@ -81,13 +82,16 @@ LA.init({
     level,
     name,
     profilePhoto,
+    url,
   }: {
     curExp: number;
     totalExp: number;
     level: number;
     name: string;
     profilePhoto: string;
+    url: string;
   }) {
+    document.querySelector<HTMLAnchorElement>(".user-info")!.href = url;
     document.querySelector<HTMLImageElement>(".user-info .profile-photo")!.src =
       profilePhoto;
     document.querySelector(".user-info .curExp")!.textContent = curExp + "";
@@ -225,25 +229,10 @@ LA.init({
     html_url: string;
     public_repos: number;
   }> {
-    // return fetch(`https://api.github.com/user`, {
-    //   headers: {
-    //     accept: "application/json",
-    //     Authorization: "Bearer " + access_token,
-    //   },
-    // }).then((e) => e.json());
     const { data } = await graphql({
       access_token,
       data: JSON.stringify({
-        query: `
-          query {
-            viewer {
-              avatarUrl
-              name
-              repositories {
-                totalCount
-              }
-            }
-          }`,
+        query: `query { viewer { avatarUrl login repositories { totalCount } } }`,
       }),
     });
     return {
