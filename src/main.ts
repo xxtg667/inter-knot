@@ -49,7 +49,7 @@ LA.init({
   renderUserInfo({
     curExp: 6982,
     totalExp: 10000,
-    level: 9999,
+    level: userInfo.public_repos,
     name: userInfo.login,
     profilePhoto: userInfo.avatar_url,
   });
@@ -186,6 +186,7 @@ LA.init({
     id: number;
     avatar_url: string;
     html_url: string;
+    public_repos: number;
   }> {
     return fetch(`https://api.github.com/user`, {
       headers: {
