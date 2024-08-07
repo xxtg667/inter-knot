@@ -9,6 +9,15 @@ LA.init({
   prefix: "inter-knot/event",
 });
 
+if (new URL(location.href).searchParams.has("code")) {
+  const res = await getAccessToken(
+    new URL(location.href).searchParams.get("code")!
+  );
+  localStorage.setItem("access_token", res.access_token);
+  localStorage.setItem("refresh_token", res.refresh_token);
+} else if (!localStorage.getItem("access_token")?.startsWith("ghu_") ?? true) {
+  getCode();
+}
 const tabs = [...document.querySelectorAll(".tab-container .tab")];
 tabs.forEach((e) => {
   e.addEventListener("click", () => {
@@ -31,28 +40,29 @@ const macy = Macy({
     y: 0,
   },
 });
-renderUserInfo({
-  curExp: 6982,
-  totalExp: 10000,
-  level: 9999,
-  name: "share121",
-  profilePhoto: new URL("/我的头像.png", import.meta.url).href,
-});
-renderArticleList(
-  Array(200)
-    .fill(null)
-    .map(() => ({
-      title: "标题标题标题标题标题标题标题标题标题标题标题标题标题标题标题标题",
-      content:
-        "内容内容内容内容内容内容内<br />容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容",
-      author:
-        "作者作者作者作者作者作者作者作者作者作者作者作者作者作者作者作者作者作者作者作者作者",
-      authorPhoto: new URL(`image${getRandomInt(0, 3)}.png`, location.href)
-        .href,
-      cover: new URL(`image${getRandomInt(0, 3)}.png`, location.href).href,
-      visited: getRandomInt(0, 10000),
-    }))
-);
+
+// renderUserInfo({
+//   curExp: 6982,
+//   totalExp: 10000,
+//   level: 9999,
+//   name: "share121",
+//   profilePhoto: new URL("/我的头像.png", import.meta.url).href,
+// });
+// renderArticleList(
+//   Array(200)
+//     .fill(null)
+//     .map(() => ({
+//       title: "标题标题标题标题标题标题标题标题标题标题标题标题标题标题标题标题",
+//       content:
+//         "内容内容内容内容内容内容内<br />容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容",
+//       author:
+//         "作者作者作者作者作者作者作者作者作者作者作者作者作者作者作者作者作者作者作者作者作者",
+//       authorPhoto: new URL(`image${getRandomInt(0, 3)}.png`, location.href)
+//         .href,
+//       cover: new URL(`image${getRandomInt(0, 3)}.png`, location.href).href,
+//       visited: getRandomInt(0, 10000),
+//     }))
+// );
 
 /**  不包含最大值，包含最小值 */
 function getRandomInt(min: number, max: number) {
@@ -225,4 +235,28 @@ function renderPopup({
   });
   popupContainer.classList.remove("closed");
   popupContainer.classList.add("open");
+}
+
+function getCode() {
+  location.href =
+    "https://github.com/login/oauth/authorize?client_id=Iv23li8gf1MxGAgvw5lU";
+}
+
+function getAccessToken(code: string): Promise<{
+  access_token: string;
+  expires_in: number;
+  refresh_token: string;
+  refresh_token_expires_in: number;
+  scope: "";
+  token_type: "bearer";
+}> {
+  return fetch(
+    `https://github.com/login/oauth/access_token?client_id=Iv23li8gf1MxGAgvw5lU&client_secret=3ea999c0e2d7283f602ab4994cc684ada2eeec2b&code=${code}`,
+    {
+      method: "POST",
+      headers: {
+        accept: "application/json",
+      },
+    }
+  ).then((e) => e.json());
 }
