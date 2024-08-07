@@ -12,11 +12,7 @@ LA.init({
 (async () => {
   if (!(localStorage.getItem("access_token")?.startsWith("ghu_") ?? false)) {
     if (new URL(location.href).searchParams.has("code")) {
-      try {
-        await getAccessToken(new URL(location.href).searchParams.get("code")!);
-      } catch {
-        getCode();
-      }
+      await getAccessToken(new URL(location.href).searchParams.get("code")!);
     } else {
       getCode();
     }
