@@ -1,5 +1,6 @@
 import "./style.less";
 import Macy from "macy";
+import img from "/img.png?url";
 
 // @ts-ignore
 LA.init({
@@ -73,7 +74,9 @@ LA.init({
     const nodes = await getDiscussions(localStorage.getItem("access_token")!);
     renderArticleList(
       nodes.map((e) => ({
-        cover: "https://avatars.githubusercontent.com/u/1067290?v=4",
+        cover:
+          html2dom(e.bodyHTML)?.querySelector<HTMLImageElement>("a > img")
+            ?.src ?? img,
         authorPhoto: e.author.avatarUrl,
         title: e.title,
         author: e.author.login,
@@ -92,7 +95,9 @@ LA.init({
       const nodes = await getDiscussions(localStorage.getItem("access_token")!);
       renderArticleList(
         nodes.map((e) => ({
-          cover: "https://avatars.githubusercontent.com/u/1067290?v=4",
+          cover:
+            html2dom(e.bodyHTML)?.querySelector<HTMLImageElement>("a > img")
+              ?.src ?? img,
           authorPhoto: e.author.avatarUrl,
           title: e.title,
           author: e.author.login,
@@ -108,6 +113,12 @@ LA.init({
     } catch {
       getCode();
     }
+  }
+
+  function html2dom(html: string) {
+    const div = document.createElement("div");
+    div.innerHTML = html;
+    return div.firstElementChild;
   }
 
   function renderUserInfo({
