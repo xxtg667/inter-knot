@@ -246,7 +246,7 @@ window.addEventListener("load", async () => {
     scope: "";
     token_type: "bearer";
   }> {
-    const { response: res } = await GM_xmlhttpRequest({
+    const { response: res } = await request({
       method: "POST",
       url: `https://github.com/login/oauth/access_token?client_id=Iv23li8gf1MxGAgvw5lU&client_secret=3ea999c0e2d7283f602ab4994cc684ada2eeec2b&code=${code}`,
       headers: {
@@ -267,7 +267,7 @@ window.addEventListener("load", async () => {
     scope: "";
     token_type: "bearer";
   }> {
-    const { response: res } = await GM_xmlhttpRequest({
+    const { response: res } = await request({
       method: "POST",
       url: `https://github.com/login/oauth/access_token?client_id=Iv23li8gf1MxGAgvw5lU&client_secret=3ea999c0e2d7283f602ab4994cc684ada2eeec2b&grant_type=refresh_token&refresh_token=${refresh_token}`,
       headers: {
@@ -353,7 +353,7 @@ window.addEventListener("load", async () => {
     access_token: string;
     data: string;
   }) {
-    const { response: res } = await GM_xmlhttpRequest({
+    const { response: res } = await request({
       method: "POST",
       url: "https://api.github.com/graphql",
       headers: {
@@ -365,3 +365,26 @@ window.addEventListener("load", async () => {
     return res;
   }
 });
+
+function request<T>(
+  prop: Partial<{
+    method: "GET" | "HEAD" | "POST";
+    url: string | URL;
+    headers: Record<string, string>;
+    data: string | Blob | File | Object | Array<T> | FormData | URLSearchParams;
+    responseType: "arraybuffer" | "blob" | "stream" | "json";
+  }>
+) {
+  return new Promise<{
+    finalUrl: string;
+    response: any;
+    responseHeaders: Record<string, string>;
+    responseText: string;
+  }>((resolve, reject) => {
+    GM_xmlhttpRequest({
+      ...prop,
+      onload: resolve,
+      onerror: reject,
+    });
+  });
+}

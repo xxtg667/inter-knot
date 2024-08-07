@@ -10,11 +10,13 @@ declare global {
       headers: Record<string, string>;
       data: string | Blob | File | Object | Array | FormData | URLSearchParams;
       responseType: "arraybuffer" | "blob" | "stream" | "json";
+      onload: (res: {
+        finalUrl: string;
+        response: any;
+        responseHeaders: Record<string, string>;
+        responseText: string;
+      }) => void;
+      onerror: (res) => void;
     }>
-  ): Promise<{
-    finalUrl: string;
-    response: any;
-    responseHeaders: Record<string, string>;
-    responseText: string;
-  }>;
+  ): void;
 }
