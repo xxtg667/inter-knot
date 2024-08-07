@@ -21,6 +21,7 @@ LA.init({
   ) {
     getCode();
   }
+
   const tabs = [...document.querySelectorAll(".tab-container .tab")];
   tabs.forEach((e) => {
     e.addEventListener("click", () => {
@@ -44,29 +45,15 @@ LA.init({
     },
   });
 
+  const userInfo = await getUserInfo(localStorage.getItem("access_token")!);
   renderUserInfo({
     curExp: 6982,
     totalExp: 10000,
     level: 9999,
-    name: "share121",
-    profilePhoto: new URL("/我的头像.png", import.meta.url).href,
+    name: userInfo.login,
+    profilePhoto: userInfo.avatar_url,
   });
-  renderArticleList(
-    Array(200)
-      .fill(null)
-      .map(() => ({
-        title:
-          "标题标题标题标题标题标题标题标题标题标题标题标题标题标题标题标题",
-        content:
-          "内容内容内容内容内容内容内<br />容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容",
-        author:
-          "作者作者作者作者作者作者作者作者作者作者作者作者作者作者作者作者作者作者作者作者作者",
-        authorPhoto: new URL(`image${getRandomInt(0, 3)}.png`, location.href)
-          .href,
-        cover: new URL(`image${getRandomInt(0, 3)}.png`, location.href).href,
-        visited: getRandomInt(0, 10000),
-      }))
-  );
+  // renderArticleList([]);
 
   /**  不包含最大值，包含最小值 */
   function getRandomInt(min: number, max: number) {
@@ -129,78 +116,7 @@ LA.init({
           authorPhoto,
           content,
           visited,
-          comments: [
-            {
-              name: "dfsdf",
-              profilePhoto: new URL("头像.png", location.href).href,
-              text: "测试评论",
-            },
-            {
-              name: "dfsdf",
-              profilePhoto: new URL("头像.png", location.href).href,
-              text: "测试评论",
-            },
-            {
-              name: "dfsdf",
-              profilePhoto: new URL("头像.png", location.href).href,
-              text: "测试评论",
-            },
-            {
-              name: "dfsdf",
-              profilePhoto: new URL("头像.png", location.href).href,
-              text: "测试评论",
-            },
-            {
-              name: "dfsdf",
-              profilePhoto: new URL("头像.png", location.href).href,
-              text: "测试评论",
-            },
-            {
-              name: "dfsdf",
-              profilePhoto: new URL("头像.png", location.href).href,
-              text: "测试评论",
-            },
-            {
-              name: "dfsdf",
-              profilePhoto: new URL("头像.png", location.href).href,
-              text: "测试评论",
-            },
-            {
-              name: "dfsdf",
-              profilePhoto: new URL("头像.png", location.href).href,
-              text: "测试评论",
-            },
-            {
-              name: "dfsdf",
-              profilePhoto: new URL("头像.png", location.href).href,
-              text: "测试评论",
-            },
-            {
-              name: "dfsdf",
-              profilePhoto: new URL("头像.png", location.href).href,
-              text: "测试评论",
-            },
-            {
-              name: "dfsdf",
-              profilePhoto: new URL("头像.png", location.href).href,
-              text: "测试评论",
-            },
-            {
-              name: "dfsdf",
-              profilePhoto: new URL("头像.png", location.href).href,
-              text: "测试评论",
-            },
-            {
-              name: "dfsdf",
-              profilePhoto: new URL("头像.png", location.href).href,
-              text: "测试评论",
-            },
-            {
-              name: "dfsdf",
-              profilePhoto: new URL("头像.png", location.href).href,
-              text: "测试评论",
-            },
-          ],
+          comments: [],
         });
       });
     });
@@ -263,5 +179,19 @@ LA.init({
         },
       }
     ).then((e) => e.json());
+  }
+
+  function getUserInfo(access_token: string): Promise<{
+    login: string;
+    id: number;
+    avatar_url: string;
+    html_url: string;
+  }> {
+    return fetch(`https://api.github.com/user`, {
+      headers: {
+        accept: "application/json",
+        Authorization: "Bearer " + access_token,
+      },
+    }).then((e) => e.json());
   }
 })();
