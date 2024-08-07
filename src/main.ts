@@ -55,6 +55,8 @@ LA.init({
     }
   }
 
+  getDiscussions(localStorage.getItem("access_token")!);
+
   function render({
     userInfo,
   }: {
@@ -231,9 +233,7 @@ LA.init({
   }> {
     const { data } = await graphql({
       access_token,
-      data: JSON.stringify({
-        query: `query { viewer { avatarUrl login repositories { totalCount } } }`,
-      }),
+      data: "query { viewer { avatarUrl login repositories { totalCount } } }",
     });
     return {
       name: data.viewer.login,
@@ -244,20 +244,38 @@ LA.init({
   }
 
   function getDiscussions(access_token: string): Promise<any> {
-    return graphql({
-      access_token,
-      data: `
+    console.log(
+      graphql({
+        access_token,
+        data: `
         query {
-          viewer {
-            avatarUrl
-            name
-            repositories {
-              totalCount
+          repository(owner: "share121", name: "inter-knot") {
+            discussions {
+              nodes {
+                author {
+                  avatarUrl
+                  login
+                  url
+                }
+                bodyHTML
+                title
+                comments {
+                  nodes {
+                    author {
+                      avatarUrl
+                      login
+                      url
+                    }
+                    bodyHTML
+                  }
+                }
+              }
             }
           }
         }
       `,
-    });
+      })
+    );
   }
 
   function graphql({
@@ -272,7 +290,7 @@ LA.init({
       headers: {
         Authorization: "Bearer " + access_token,
       },
-      body: data,
+      body: JSON.stringify({ query: data }),
     }).then((e) => e.json());
   }
 })();
