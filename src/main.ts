@@ -1,7 +1,7 @@
 import "./style.less";
 // @ts-ignore
 import Macy from "macy";
-import img from "/img.png?url";
+import img from "/img.svg?url";
 
 // @ts-ignore
 LA.init({
