@@ -281,11 +281,14 @@ function request<T>(
             return response.blob();
           case 'json':
             return response.json();
+          case 'stream':
+            return response.body; // Handling stream differently since streams can be read only once
           default:
             return response.text();
         }
       })();
 
+      // Simplify and assume responseText is not needed if other types are used
       resolve({
         finalUrl: response.url,
         response: responseData,
@@ -293,14 +296,13 @@ function request<T>(
           acc[key] = value;
           return acc;
         }, {} as Record<string, string>),
-        responseText: await response.text()
+        responseText: prop.responseType === 'json' || prop.responseType === 'stream' ? "" : responseData
       });
     } catch (error) {
       reject(error);
     }
   });
 }
-
 
 async function _getDiscussions(){
   const { response: res } = await request({
