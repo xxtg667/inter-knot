@@ -185,11 +185,12 @@ function renderArticleList(
         `<div class="card-wrapper"><div class="card"><section class="cover-container"><img class="cover" src="${cover}" alt="封面" loading="lazy" /><div class="visited"><svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" ><path fill="currentColor" d="M1.182 12C2.122 6.88 6.608 3 12 3s9.878 3.88 10.819 9c-.94 5.12-5.427 9-10.819 9s-9.878-3.88-10.818-9M12 17a5 5 0 1 0 0-10a5 5 0 0 0 0 10m0-2a3 3 0 1 1 0-6a3 3 0 0 1 0 6" /></svg>${visited}</div></section><section class="info-container"><div class="profile"><img class="profile-photo" src="${authorPhoto}" alt="头像" loading="lazy" /><div class="username">${author}</div></div><div class="title">${title}</div><div class="content">${text}</div></section></div></div>`
     )
     .join("");
-  document.querySelectorAll(".card-container img").forEach((e) =>
-    e.addEventListener("load", () => macy.recalculate(true), {
+  document.querySelectorAll(".card-container img").forEach((e) => {
+    e.addEventListener("load", () => macy.recalculate(true));
+    e.addEventListener("error", () => ((e as HTMLImageElement).src = img), {
       once: true,
-    })
-  );
+    });
+  });
   document.querySelectorAll(".card-container .card").forEach((e, i) => {
     e.addEventListener("click", () => {
       renderPopup(list[i]);
