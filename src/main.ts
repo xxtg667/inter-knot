@@ -67,6 +67,7 @@ window.run = async () => {
 
   handleErr(async () => {
     const nodes = await getDiscussions(localStorage.getItem("access_token")!);
+    console.log(nodes);
     renderArticleList(
       nodes.map((e) => {
         const dom = html2dom(e.bodyHTML);
@@ -81,7 +82,7 @@ window.run = async () => {
           content: dom.innerHTML,
           text: e.bodyText,
           autorUrl: e.author.url,
-          commentUrl: e.commentUrl + "#new_comment_form",
+          commentUrl: e.commentUrl,
           visited: getRandomInt(0, 1001),
           comments: e.comments.nodes.map((e) => ({
             profilePhoto: e.author.avatarUrl,
@@ -333,7 +334,7 @@ async function getDiscussions(access_token: string) {
             bodyHTML: string;
             bodyText: string;
             title: string;
-            commentUrl: string;
+            url: string;
             comments: {
               nodes: {
                 author: {
@@ -355,6 +356,7 @@ async function getDiscussions(access_token: string) {
   return nodes.map((e) => ({
     ...e,
     bodyHTML: xss(e.bodyHTML),
+    commentUrl: e.url + "#new_comment_form",
     comments: {
       nodes: e.comments.nodes.map((e) => ({
         ...e,
