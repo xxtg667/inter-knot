@@ -14,7 +14,7 @@ LA.init({
   id: "3J6dEY8wQU3ZxACy",
   ck: "3J6dEY8wQU3ZxACy",
   autoTrack: true,
-  prefix: "inter-knot/event",
+  prefix: "event",
 });
 
 const tabs = [...document.querySelectorAll(".tab-container .tab")];
