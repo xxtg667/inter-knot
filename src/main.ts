@@ -39,38 +39,19 @@ const macy = Macy({
   margin: { x: 0, y: 0 },
 });
 
-setTimeout(() => {
-  if (typeof window.getUserInfo === "undefined") {
-    alert("请先安装“绳网跨域助手”");
-    location.href = "https://greasyfork.org/zh-CN/scripts/502874";
-  }
-}, 3000);
-
-window.run = async () => {
-  if (!(localStorage.getItem("access_token")?.startsWith("ghu_") ?? false)) {
-    if (new URL(location.href).searchParams.has("code")) {
-      try {
-        await getAccessToken(new URL(location.href).searchParams.get("code")!);
-      } catch {
-        getCode();
-      }
-    } else getCode();
-  }
-
   handleErr(async () => {
-    const userInfo = await getUserInfo(localStorage.getItem("access_token")!);
     renderUserInfo({
-      curExp: 6982,
-      totalExp: 10000,
-      level: userInfo.public_repos,
-      name: userInfo.name,
-      profilePhoto: userInfo.avatar_url,
-      url: userInfo.html_url,
+      curExp: 114514,
+      totalExp: 114514,
+      level: 70,
+      name: "法厄同",
+      profilePhoto: "https://i1.hdslb.com/bfs/face/cb6e80223d3920372a0104c65425e14c3805a6fe.jpg",
+      url: "https://www.bilibili.com/video/BV1n5YsejE8o",
     });
   });
 
   handleErr(async () => {
-    const nodes = await getDiscussions(localStorage.getItem("access_token")!);
+    const nodes = await getDiscussions();
     console.log(nodes);
     renderArticleList(
       nodes.map((e) => {
@@ -104,21 +85,6 @@ window.run = async () => {
     );
   });
 };
-
-async function handleErr(fn: Function) {
-  try {
-    await fn();
-  } catch (e) {
-    console.error(e);
-    try {
-      await refreshAccessToken(localStorage.getItem("refresh_token")!);
-      await fn();
-    } catch (e) {
-      console.error(e);
-      getCode();
-    }
-  }
-}
 
 function html2dom(html: string) {
   let template = document.createElement("template");
@@ -235,60 +201,14 @@ function renderPopup({
   popupContainer.classList.add("open");
 }
 
-function getCode() {
-  if (import.meta.env.MODE === "production") {
-    location.href =
-      "https://github.com/login/oauth/authorize?client_id=Iv23li8gf1MxGAgvw5lU";
-  } else {
-    location.href =
-      "https://github.com/login/oauth/authorize?client_id=Iv23li8gf1MxGAgvw5lU&redirect_uri=http://localhost:5173/inter-knot/";
-  }
-}
-
-async function getAccessToken(code: string) {
-  const { response: res } = await window.getAccessToken(code);
-  localStorage.setItem("access_token", res.access_token);
-  localStorage.setItem("refresh_token", res.refresh_token);
-  return res;
-}
-
-async function refreshAccessToken(refresh_token: string): Promise<{
-  access_token: string;
-  expires_in: number;
-  refresh_token: string;
-  refresh_token_expires_in: number;
-  scope: "";
-  token_type: "bearer";
-}> {
-  const { response: res } = await window.refreshAccessToken(refresh_token);
-  localStorage.setItem("access_token", res.access_token);
-  localStorage.setItem("refresh_token", res.refresh_token);
-  return res;
-}
-
-async function getUserInfo(access_token: string): Promise<{
-  name: string;
-  avatar_url: string;
-  html_url: string;
-  public_repos: number;
-}> {
-  const { data } = await window.getUserInfo(access_token);
-  return {
-    name: data.viewer.login,
-    avatar_url: data.viewer.avatarUrl,
-    html_url: `https://github.com/${data.viewer.login}`,
-    public_repos: data.viewer.repositories.totalCount,
-  };
-}
-
-async function getDiscussions(access_token: string) {
+async function getDiscussions() {
   const {
     data: {
       repository: {
         discussions: { nodes },
       },
     },
-  } = await window.getDiscussions(access_token);
+  } = await _getDiscussions();
   return nodes.map((e) => ({
     ...e,
     author: {
@@ -317,4 +237,14 @@ function getRandomInt(min: number, max: number) {
   min = Math.ceil(min);
   max = Math.floor(max);
   return Math.floor(Math.random() * (max - min) + min);
+}
+
+async function _getDiscussions(){
+  const { response: res } = await request({
+    method: "GET",
+    url: "https://inter-knot-api.xxtg666.top/dissusions",
+    responseType: "json",
+    data: JSON.stringify({ query: data }),
+  });
+  return res;
 }
