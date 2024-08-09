@@ -11,6 +11,9 @@ importers:
       macy:
         specifier: ^2.5.1
         version: 2.5.1
+      xss:
+        specifier: ^1.0.15
+        version: 1.0.15
     devDependencies:
       '@tomjs/vite-plugin-html':
         specifier: ^1.5.2
@@ -650,6 +653,9 @@ packages:
     engines: {node: '>=4'}
     hasBin: true
 
+  cssfilter@0.0.10:
+    resolution: {integrity: sha512-FAaLDaplstoRsDR8XGYH51znUN0UY7nMc6Z9/fvE8EXGwvJE9hu7W2vHwx1+bd6gCYnln9nLbzxFTrcO9YQDZw==}
+
   debug@4.3.5:
     resolution: {integrity: sha512-pt0bNEmneDIvdL1Xsd9oDQ/wrQRkXDT4AUWlNZNPKvW5x/jyO9VFXkJUP07vQ2upmw5PlaITaPKc31jK13V+jg==}
     engines: {node: '>=6.0'}
@@ -1148,6 +1154,11 @@ packages:
         optional: true
       terser:
         optional: true
+
+  xss@1.0.15:
+    resolution: {integrity: sha512-FVdlVVC67WOIPvfOwhoMETV72f6GbW7aOabBC3WxN/oUdoEMDyLz4OgRv5/gck2ZeNqEQu+Tb0kloovXOfpYVg==}
+    engines: {node: '>= 0.10.0'}
+    hasBin: true
 
 snapshots:
 
@@ -1663,6 +1674,8 @@ snapshots:
   cssdb@8.1.0: {}
 
   cssesc@3.0.0: {}
+
+  cssfilter@0.0.10: {}
 
   debug@4.3.5:
     dependencies:
@@ -2247,3 +2260,8 @@ snapshots:
       less: 4.2.0
       sass: 1.77.8
       terser: 5.31.2
+
+  xss@1.0.15:
+    dependencies:
+      commander: 2.20.3
+      cssfilter: 0.0.10
