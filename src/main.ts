@@ -67,23 +67,26 @@ window.run = async () => {
   handleErr(async () => {
     const nodes = await getDiscussions(localStorage.getItem("access_token")!);
     renderArticleList(
-      nodes.map((e) => ({
-        cover:
-          html2dom(e.bodyHTML)?.querySelector<HTMLImageElement>("img")?.src ??
-          img,
-        authorPhoto: e.author.avatarUrl,
-        title: e.title,
-        author: e.author.login,
-        content: e.bodyHTML,
-        text: e.bodyText,
-        url: e.url + "#new_comment_form",
-        visited: getRandomInt(0, 1001),
-        comments: e.comments.nodes.map((e) => ({
-          profilePhoto: e.author.avatarUrl,
-          name: e.author.login,
-          content: e.bodyHTML,
-        })),
-      }))
+      nodes.map((e) => {
+        const dom = html2dom(e.bodyHTML);
+        const cover = dom?.querySelector<HTMLImageElement>("img")?.src ?? img;
+        dom?.querySelector("img")?.remove();
+        return {
+          cover: cover,
+          authorPhoto: e.author.avatarUrl,
+          title: e.title,
+          author: e.author.login,
+          content: dom?.outerHTML!,
+          text: e.bodyText,
+          url: e.url + "#new_comment_form",
+          visited: getRandomInt(0, 1001),
+          comments: e.comments.nodes.map((e) => ({
+            profilePhoto: e.author.avatarUrl,
+            name: e.author.login,
+            content: e.bodyHTML,
+          })),
+        };
+      })
     );
   });
 };
