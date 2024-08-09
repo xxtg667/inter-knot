@@ -39,6 +39,19 @@ const macy = Macy({
   margin: { x: 0, y: 0 },
 });
 
+async function handleErr(fn: Function) {
+  try {
+    await fn();
+  } catch (e) {
+    console.error(e);
+    try {
+      await fn();
+    } catch (e) {
+      console.error(e);
+    }
+  }
+}
+
   handleErr(async () => {
     renderUserInfo({
       curExp: 114514,
