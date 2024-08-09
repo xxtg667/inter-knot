@@ -71,13 +71,12 @@ window.run = async () => {
         const dom = html2dom(e.bodyHTML);
         const cover = dom?.querySelector<HTMLImageElement>("img")?.src ?? img;
         dom?.querySelector("img")?.remove();
-        console.log(dom);
         return {
           cover: cover,
           authorPhoto: e.author.avatarUrl,
           title: e.title,
           author: e.author.login,
-          content: e.bodyHTML,
+          content: dom.innerHTML,
           text: e.bodyText,
           url: e.url + "#new_comment_form",
           visited: getRandomInt(0, 1001),
@@ -131,9 +130,9 @@ function request<T>(
 }
 
 function html2dom(html: string) {
-  const div = document.createElement("div");
-  div.innerHTML = html;
-  return div.firstElementChild;
+  let template = document.createElement("template");
+  template.innerHTML = html;
+  return template;
 }
 
 function renderUserInfo({
