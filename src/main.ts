@@ -69,8 +69,9 @@ window.run = async () => {
     renderArticleList(
       nodes.map((e) => {
         const dom = html2dom(e.bodyHTML);
-        const cover = dom?.querySelector<HTMLImageElement>("img")?.src ?? img;
-        dom?.querySelector("img")?.remove();
+        const cover =
+          dom.content?.querySelector<HTMLImageElement>("img")?.src ?? img;
+        dom.content?.querySelector("img")?.remove();
         return {
           cover: cover,
           authorPhoto: e.author.avatarUrl,
