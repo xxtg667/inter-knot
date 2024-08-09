@@ -355,6 +355,7 @@ async function getDiscussions(access_token: string) {
   });
   return nodes.map((e) => ({
     ...e,
+    title: xss(e.title),
     bodyHTML: xss(e.bodyHTML),
     commentUrl: e.url + "#new_comment_form",
     comments: {
