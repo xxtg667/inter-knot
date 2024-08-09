@@ -39,10 +39,10 @@ body {
       left: 0;
       right: 0;
       display: flex;
-      justify-content: space-between;
       padding: 22px 68px;
       height: 100px;
       background: #000;
+      align-items: center;
 
       .user-info {
         color: unset;
@@ -118,6 +118,7 @@ body {
         font-style: italic;
         line-height: 1;
         background: url("/bg-point-tab.svg") 0 0 / 7px;
+        margin-left: auto;
 
         .tab {
           display: flex;
@@ -211,6 +212,16 @@ body {
                 tab-size 0.3s cubic-bezier(0.35, 0.7, 0, 0.8) infinite alternate;
             }
           }
+        }
+      }
+
+      .github {
+        margin-left: 8px;
+        color: unset;
+
+        svg {
+          height: 48px;
+          width: 48px;
         }
       }
     }
