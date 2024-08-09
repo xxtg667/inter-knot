@@ -84,7 +84,6 @@ const macy = Macy({
       })
     );
   });
-};
 
 function html2dom(html: string) {
   let template = document.createElement("template");
