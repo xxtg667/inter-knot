@@ -305,7 +305,7 @@ function request<T>(
 async function _getDiscussions(){
   const { response: res } = await request({
     method: "GET",
-    url: "https://inter-knot-api.xxtg666.top/dissusions",
+    url: "https://inter-knot-api.xxtg666.top/discussions",
     responseType: "json",
   });
   return res;
