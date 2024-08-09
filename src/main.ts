@@ -77,12 +77,12 @@ window.run = async () => {
         const dom = html2dom(e.bodyHTML);
         const firstImg = dom.content?.querySelector("img");
         const cover = firstImg?.src ?? img;
-        // let parent = firstImg?.parentElement;
-        // firstImg?.remove();
-        // while (parent instanceof HTMLElement && parent.children.length == 0) {
-        //   parent?.remove();
-        //   parent = parent.parentElement;
-        // }
+        let parent = firstImg?.parentElement;
+        firstImg?.remove();
+        while (parent instanceof HTMLElement && parent.children.length == 0) {
+          parent?.remove();
+          parent = parent.parentElement;
+        }
         return {
           cover: cover,
           authorPhoto: e.author.avatarUrl,
@@ -125,6 +125,43 @@ function html2dom(html: string) {
   template.innerHTML = html;
   return template;
 }
+
+// setInterval(() => {
+//   handleErr(async () => {
+//     const nodes = await getDiscussions(localStorage.getItem("access_token")!);
+//     console.log(nodes);
+//     renderArticleList(
+//       nodes.map((e) => {
+//         const dom = html2dom(e.bodyHTML);
+//         const firstImg = dom.content?.querySelector("img");
+//         const cover = firstImg?.src ?? img;
+//         let parent = firstImg?.parentElement;
+//         firstImg?.remove();
+//         while (parent instanceof HTMLElement && parent.children.length == 0) {
+//           parent?.remove();
+//           parent = parent.parentElement;
+//         }
+//         return {
+//           cover: cover,
+//           authorPhoto: e.author.avatarUrl,
+//           title: e.title,
+//           author: e.author.login,
+//           content: dom.innerHTML,
+//           text: e.bodyText,
+//           authorUrl: e.author.url,
+//           commentUrl: e.commentUrl,
+//           visited: getRandomInt(0, 1001),
+//           comments: e.comments.nodes.map((e) => ({
+//             profilePhoto: e.author.avatarUrl,
+//             name: e.author.login,
+//             content: e.bodyHTML,
+//             authorUrl: e.author.url,
+//           })),
+//         };
+//       })
+//     );
+//   });
+// }, 1000 * 60 * 2);
 
 function renderUserInfo({
   curExp,
