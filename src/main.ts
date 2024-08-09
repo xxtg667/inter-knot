@@ -36,7 +36,7 @@ const macy = Macy({
 });
 
 setTimeout(() => {
-  if (typeof window.GM_xmlhttpRequest === "undefined") {
+  if (typeof window.getUserInfo === "undefined") {
     alert("请先安装“绳网跨域助手”");
     location.href = "https://greasyfork.org/zh-CN/scripts/502874";
   }
@@ -108,29 +108,6 @@ async function handleErr(fn: Function) {
       getCode();
     }
   }
-}
-
-function request<T>(
-  prop: Partial<{
-    method: "GET" | "HEAD" | "POST";
-    url: string | URL;
-    headers: Record<string, string>;
-    data: string | Blob | File | Object | Array<T> | FormData | URLSearchParams;
-    responseType: "arraybuffer" | "blob" | "stream" | "json";
-  }>
-) {
-  return new Promise<{
-    finalUrl: string;
-    response: any;
-    responseHeaders: Record<string, string>;
-    responseText: string;
-  }>((resolve, reject) => {
-    GM_xmlhttpRequest({
-      ...prop,
-      onload: resolve,
-      onerror: reject,
-    });
-  });
 }
 
 function html2dom(html: string) {
@@ -254,22 +231,8 @@ function getCode() {
   }
 }
 
-async function getAccessToken(code: string): Promise<{
-  access_token: string;
-  expires_in: number;
-  refresh_token: string;
-  refresh_token_expires_in: number;
-  scope: "";
-  token_type: "bearer";
-}> {
-  const { response: res } = await request({
-    method: "POST",
-    url: `https://github.com/login/oauth/access_token?client_id=Iv23li8gf1MxGAgvw5lU&client_secret=3ea999c0e2d7283f602ab4994cc684ada2eeec2b&code=${code}`,
-    headers: {
-      accept: "application/json",
-    },
-    responseType: "json",
-  });
+async function getAccessToken(code: string) {
+  const { response: res } = await window.getAccessToken(code);
   localStorage.setItem("access_token", res.access_token);
   localStorage.setItem("refresh_token", res.refresh_token);
   return res;
@@ -283,14 +246,7 @@ async function refreshAccessToken(refresh_token: string): Promise<{
   scope: "";
   token_type: "bearer";
 }> {
-  const { response: res } = await request({
-    method: "POST",
-    url: `https://github.com/login/oauth/access_token?client_id=Iv23li8gf1MxGAgvw5lU&client_secret=3ea999c0e2d7283f602ab4994cc684ada2eeec2b&grant_type=refresh_token&refresh_token=${refresh_token}`,
-    headers: {
-      accept: "application/json",
-    },
-    responseType: "json",
-  });
+  const { response: res } = await window.refreshAccessToken(refresh_token);
   localStorage.setItem("access_token", res.access_token);
   localStorage.setItem("refresh_token", res.refresh_token);
   return res;
@@ -302,10 +258,7 @@ async function getUserInfo(access_token: string): Promise<{
   html_url: string;
   public_repos: number;
 }> {
-  const { data } = await graphql({
-    access_token,
-    data: "query { viewer { avatarUrl login repositories { totalCount } } }",
-  });
+  const { data } = await window.getUserInfo(access_token);
   return {
     name: data.viewer.login,
     avatar_url: data.viewer.avatarUrl,
@@ -321,38 +274,7 @@ async function getDiscussions(access_token: string) {
         discussions: { nodes },
       },
     },
-  }: {
-    data: {
-      repository: {
-        discussions: {
-          nodes: {
-            author: {
-              avatarUrl: string;
-              login: string;
-              url: string;
-            };
-            bodyHTML: string;
-            bodyText: string;
-            title: string;
-            url: string;
-            comments: {
-              nodes: {
-                author: {
-                  avatarUrl: string;
-                  login: string;
-                  url: string;
-                };
-                bodyHTML: string;
-              }[];
-            };
-          }[];
-        };
-      };
-    };
-  } = await graphql({
-    access_token,
-    data: 'query { repository(owner: "share121", name: "inter-knot") { discussions(first: 100) { nodes { author { avatarUrl login url } bodyHTML url bodyText title comments(first: 100) { nodes { author { avatarUrl login url } bodyHTML } } } } } }',
-  });
+  } = await window.getDiscussions(access_token);
   return nodes.map((e) => ({
     ...e,
     title: xss(e.title),
@@ -372,23 +294,4 @@ function getRandomInt(min: number, max: number) {
   min = Math.ceil(min);
   max = Math.floor(max);
   return Math.floor(Math.random() * (max - min) + min);
-}
-
-async function graphql({
-  access_token,
-  data,
-}: {
-  access_token: string;
-  data: string;
-}) {
-  const { response: res } = await request({
-    method: "POST",
-    url: "https://api.github.com/graphql",
-    headers: {
-      Authorization: "Bearer " + access_token,
-    },
-    responseType: "json",
-    data: JSON.stringify({ query: data }),
-  });
-  return res;
 }
