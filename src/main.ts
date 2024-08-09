@@ -58,7 +58,7 @@ async function handleErr(fn: Function) {
       totalExp: 114514,
       level: 70,
       name: "法厄同",
-      profilePhoto: "https://i1.hdslb.com/bfs/face/cb6e80223d3920372a0104c65425e14c3805a6fe.jpg",
+      profilePhoto: "https://static-pages.xxtg666.top/zzz_avatar.jpg",
       url: "https://www.bilibili.com/video/BV1n5YsejE8o",
     });
   });
@@ -251,12 +251,62 @@ function getRandomInt(min: number, max: number) {
   return Math.floor(Math.random() * (max - min) + min);
 }
 
+function request<T>(
+  prop: Partial<{
+    method: "GET" | "HEAD" | "POST";
+    url: string | URL;
+    headers: Record<string, string>;
+    data: string | Blob | File | Object | Array<T> | FormData | URLSearchParams;
+    responseType: "arraybuffer" | "blob" | "stream" | "json";
+  }>
+) {
+  return new Promise<{
+    finalUrl: string;
+    response: any;
+    responseHeaders: Record<string, string>;
+    responseText: string;
+  }>(async (resolve, reject) => {
+    try {
+      const response = await fetch(prop.url.toString(), {
+        method: prop.method,
+        headers: new Headers(prop.headers),
+        body: prop.data instanceof FormData || prop.data instanceof URLSearchParams || typeof prop.data === 'string' || prop.data instanceof Blob || prop.data instanceof File ? prop.data : JSON.stringify(prop.data),
+      });
+
+      const responseData = await (function() {
+        switch (prop.responseType) {
+          case 'arraybuffer':
+            return response.arrayBuffer();
+          case 'blob':
+            return response.blob();
+          case 'json':
+            return response.json();
+          default:
+            return response.text();
+        }
+      })();
+
+      resolve({
+        finalUrl: response.url,
+        response: responseData,
+        responseHeaders: Array.from(response.headers.entries()).reduce((acc, [key, value]) => {
+          acc[key] = value;
+          return acc;
+        }, {} as Record<string, string>),
+        responseText: await response.text()
+      });
+    } catch (error) {
+      reject(error);
+    }
+  });
+}
+
+
 async function _getDiscussions(){
   const { response: res } = await request({
     method: "GET",
     url: "https://inter-knot-api.xxtg666.top/dissusions",
     responseType: "json",
-    data: JSON.stringify({ query: data }),
   });
   return res;
 }
