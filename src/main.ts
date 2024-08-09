@@ -40,16 +40,7 @@ const macy = Macy({
 });
 
 async function handleErr(fn: Function) {
-  try {
-    await fn();
-  } catch (e) {
-    console.error(e);
-    try {
-      await fn();
-    } catch (e) {
-      console.error(e);
-    }
-  }
+  await fn();
 }
 window.run = async () => {
   handleErr(async () => {
