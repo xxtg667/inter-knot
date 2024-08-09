@@ -51,7 +51,7 @@ async function handleErr(fn: Function) {
     }
   }
 }
-
+window.run = async () => {
   handleErr(async () => {
     renderUserInfo({
       curExp: 114514,
@@ -97,7 +97,7 @@ async function handleErr(fn: Function) {
       })
     );
   });
-
+};
 function html2dom(html: string) {
   let template = document.createElement("template");
   template.innerHTML = html;
@@ -310,3 +310,10 @@ async function _getDiscussions(){
   });
   return res;
 }
+
+const i = setInterval(() => {
+  if (typeof window.run === "function") {
+    window.run();
+    clearInterval(i);
+  }
+}, 1000);
