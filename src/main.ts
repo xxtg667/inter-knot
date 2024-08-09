@@ -3,7 +3,11 @@ import "./style.less";
 import Macy from "macy";
 import img from "/img.svg?url";
 import closeBtn from "/close.svg?raw";
-import xss from "xss";
+import DOMPurify from "dompurify";
+
+function xss(html: string) {
+  return DOMPurify.sanitize(html);
+}
 
 // @ts-ignore
 LA.init({
@@ -73,12 +77,12 @@ window.run = async () => {
         const dom = html2dom(e.bodyHTML);
         const firstImg = dom.content?.querySelector("img");
         const cover = firstImg?.src ?? img;
-        let parent = firstImg?.parentElement;
-        firstImg?.remove();
-        while (parent instanceof HTMLElement && parent.children.length == 0) {
-          parent?.remove();
-          parent = parent.parentElement;
-        }
+        // let parent = firstImg?.parentElement;
+        // firstImg?.remove();
+        // while (parent instanceof HTMLElement && parent.children.length == 0) {
+        //   parent?.remove();
+        //   parent = parent.parentElement;
+        // }
         return {
           cover: cover,
           authorPhoto: e.author.avatarUrl,
@@ -293,6 +297,7 @@ async function getDiscussions(access_token: string) {
     },
     title: xss(e.title),
     bodyHTML: xss(e.bodyHTML),
+    bodyText: xss(e.bodyText),
     commentUrl: e.url + "#new_comment_form",
     comments: {
       nodes: e.comments.nodes.map((e) => ({
