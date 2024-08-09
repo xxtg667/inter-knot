@@ -5,7 +5,7 @@ import postcsspxtoviewport from "postcss-px-to-viewport";
 import postcssPresetEnv from "postcss-preset-env";
 
 export default defineConfig({
-  base: "/inter-knot/",
+  base: "/",
   server: {
     host: "0.0.0.0",
   },
